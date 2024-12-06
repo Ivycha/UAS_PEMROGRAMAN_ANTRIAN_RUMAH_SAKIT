@@ -1,0 +1,93 @@
+print("PUSAT LAYANAN RUMAH SAKIT LDR ")
+
+urutan_pasien = []
+Dokter_layanan = {
+    "umum": ["Dr. Sisi", "Dr. Leon"],
+    "anak": ["Dr. Ayman", "Dr. Dewi"],
+    "spesialis": ["Dr. Edel", "Dr. Lummon"]
+}
+
+def tambah_pasien_ke_urutan(nama, layanan, prioritas, dokter, status):
+    pasien = {
+        "Nama": nama,
+        "Layanan": layanan,
+        "Prioritas": prioritas,
+        "Dokter": dokter,
+        "Waktu Tunggu": hitung_waktu(prioritas),
+        "Status": status
+    }
+    urutan_pasien.append(pasien)
+    urutkan_antrian()
+    print(f"Pasien '{nama}' sudah ditambahkan dalam list {prioritas} pasien dokter {dokter}.")
+    tampilkan_urutan()
+
+def urutkan_antrian():
+    for i in range(len(urutan_pasien)):
+        for j in range(len(urutan_pasien) - i - 1):
+            if urutan_pasien[j]["Prioritas"] > urutan_pasien[j + 1]["Prioritas"]:
+                urutan_pasien[j], urutan_pasien[j + 1] = urutan_pasien[j + 1], urutan_pasien[j]
+
+def hitung_waktu(prioritas):
+    if prioritas == 1:
+        return "5 menit"
+    elif prioritas == 2:
+        return "10 menit"
+    elif prioritas == 3:
+        return "15 menit"
+    else:
+        return "Tidak diketahui"
+
+def tampilkan_urutan():
+    if not urutan_pasien:
+        print("Tidak ada pasien dalam urutan.")
+    else:
+        print("\nDaftar urutan pasien:")
+        for index, pasien in enumerate(urutan_pasien, start=1):
+            prioritas_text = {1: "Darurat", 2: "Gawat", 3: "Ringan"}.get(pasien["Prioritas"], "Tidak Ada")
+            print(f"{index}. Nama: {pasien['Nama']}, Layanan: {pasien['Layanan']}, Prioritas: {prioritas_text}, "
+                  f"Dokter: {pasien['Dokter']}, Waktu Tunggu: {pasien['Waktu Tunggu']}, Status: {pasien['Status']}")
+
+while True:
+    print("\n silahkan mengisi data anda disini")
+    print("1. Tambah Pasien")
+    print("2. Tampilkan Urutan")
+    print("3. Keluar")
+
+    pilihan = input("Pilih menu (1/2/3): ")
+
+    if pilihan == "1":
+        nama = input("nama pasien: ")
+        layanan = input("jenis layanan (Umum, Anak, Spesialis): ").lower()
+        if layanan not in Dokter_layanan:
+            print("Layanan tidak valid. Silakan coba lagi.")
+            continue
+
+        print("Pilih dokter :")
+        for i, dokter in enumerate(Dokter_layanan[layanan], start=1):
+            print(f"{i}. {dokter}")
+
+        try:
+            dokter_index = int(input("Dokter : ")) - 1
+            if dokter_index in [0, 1]:
+                dokter = Dokter_layanan[layanan][dokter_index]
+                print("Pilih tingkat prioritas pasien:")
+                print("1. Darurat")
+                print("2. Gawat")
+                print("3. Ringan")
+                prioritas = int(input("Masukkan nomor prioritas (1/2/3): "))
+                if prioritas in [1, 2, 3]:
+                    status = input("Masukkan status medis pasien: ")
+                    tambah_pasien_ke_urutan(nama, layanan, prioritas, dokter, status)
+                else:
+                    print("Prioritas tidak valid. Pasien tidak ditambahkan.")
+            else:
+                print("Dokter tidak valid. Pasien tidak ditambahkan.")
+        except ValueError:
+            print("Input harus berupa angka. Pasien tidak ditambahkan.")
+    elif pilihan == "2":
+        tampilkan_urutan()
+    elif pilihan == "3":
+        print("Terima kasih!")
+        break
+    else:
+        print("Pilihan tidak valid. Silakan coba lagi.")
